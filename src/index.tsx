@@ -45,6 +45,7 @@ export interface Source {
 
 export interface Props {
   source: Source
+  password?: string
   style?: View['props']['style']
   webviewStyle?: WebView['props']['style']
   webviewProps?: WebView['props']
@@ -70,6 +71,7 @@ interface State {
 
 function viewerHtml(
   base64: string,
+  password?: string,
   customStyle?: CustomStyle,
   withScroll: boolean = false,
   withPinchZoom: boolean = false,
@@ -114,7 +116,7 @@ function viewerHtml(
     </script>
   </head>
   <body>
-     <div id="file" data-file="${base64}"></div>
+     <div id="file" data-file="${base64}" data-pw="${password}"></div>
      <div id="react-container"></div>
      <script type="text/javascript" src="bundle.js"></script>
    </body>
@@ -129,6 +131,7 @@ const pdfPath = `${cacheDirectory}file.pdf`
 
 async function writeWebViewReaderFileAsync(
   data: string,
+  password?: string,
   customStyle?: CustomStyle,
   withScroll?: boolean,
   withPinchZoom?: boolean,
@@ -143,6 +146,7 @@ async function writeWebViewReaderFileAsync(
     htmlPath,
     viewerHtml(
       data,
+      password,
       customStyle,
       withScroll,
       withPinchZoom,
@@ -291,21 +295,24 @@ class PdfReader extends React.Component<Props, State> {
     try {
       const {
         source,
+        password,
         customStyle,
         withScroll,
         withPinchZoom,
         maximumPinchZoomScale,
       } = this.props
       const { renderType } = this.state
+
       switch (renderType!) {
         case 'GOOGLE_DRIVE_VIEWER': {
           break;
         }
-        
+
         case 'URL_TO_BASE64': {
           const data = await fetchPdfAsync(source)
           await writeWebViewReaderFileAsync(
             data!,
+            password,
             customStyle,
             withScroll,
             withPinchZoom,
@@ -317,6 +324,7 @@ class PdfReader extends React.Component<Props, State> {
         case 'DIRECT_BASE64': {
           await writeWebViewReaderFileAsync(
             source.base64!,
+            password,
             customStyle,
             withScroll,
             withPinchZoom,
@@ -343,6 +351,7 @@ class PdfReader extends React.Component<Props, State> {
 
   getRenderType = () => {
     const {
+      password,
       useGoogleReader,
       useGoogleDriveViewer,
       source: { uri, base64 },
@@ -356,7 +365,7 @@ class PdfReader extends React.Component<Props, State> {
       return 'GOOGLE_DRIVE_VIEWER';
     }
 
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === 'ios' && !password) {
       if (uri !== undefined) {
         return 'DIRECT_URL'
       }
