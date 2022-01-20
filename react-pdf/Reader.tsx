@@ -169,6 +169,7 @@ class Reader extends React.Component<Props, State> {
           >
             <Document
               loading={' '}
+              onPassword={callback => callback(password)}
               onLoadSuccess={this.onDocumentLoadSuccess}
               onLoadError={this.onError}
               onSourceError={this.onError}
@@ -250,9 +251,10 @@ class Reader extends React.Component<Props, State> {
 
 const tagData = document.querySelector('#file')
 const file = tagData.getAttribute('data-file')
+const password = tagData.getAttribute('data-pw')
 // @ts-ignore
 const customStyle = window.CUSTOM_STYLE
 // @ts-ignore
 const withScroll = window.WITH_SCROLL
 
-render(<Reader {...{ file, customStyle, withScroll }} />, ReactContainer)
+render(<Reader {...{ file, password, customStyle, withScroll }} />, ReactContainer)
