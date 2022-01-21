@@ -1,6 +1,6 @@
 {
   "name": "rn-pdf-reader-js-with-password",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "PDF reader for Expo with password injection",
   "main": "node_modules/expo/AppEntry.js",
   "types": "lib/index.d.ts",
