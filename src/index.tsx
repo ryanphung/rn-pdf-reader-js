@@ -76,6 +76,7 @@ function viewerHtml(
   withScroll: boolean = false,
   withPinchZoom: boolean = false,
   maximumPinchZoomScale: number = 5,
+  bundle
 ): string {
   return `
 <!DOCTYPE html>
@@ -118,7 +119,8 @@ function viewerHtml(
   <body>
      <div id="file" data-file="${base64}" data-pw="${password}"></div>
      <div id="react-container"></div>
-     <script type="text/javascript" src="bundle.js"></script>
+     <script type="text/javascript">${bundle}</script>
+     <!--script type="text/javascript" src="bundle.js"></script-->
    </body>
 </html>
 `
@@ -135,13 +137,14 @@ async function writeWebViewReaderFileAsync(
   customStyle?: CustomStyle,
   withScroll?: boolean,
   withPinchZoom?: boolean,
-  maximumPinchZoomScale?: number,
+  maximumPinchZoomScale?: number
 ): Promise<void> {
   const { exists, md5 } = await getInfoAsync(bundleJsPath, { md5: true })
   const bundleContainer = require('./bundleContainer')
-  if (__DEV__ || !exists || bundleContainer.getBundleMd5() !== md5) {
-    await writeAsStringAsync(bundleJsPath, bundleContainer.getBundle())
-  }
+  const bundle = bundleContainer.getBundle()
+  // if (__DEV__ || !exists || bundleContainer.getBundleMd5() !== md5) {
+  //   await writeAsStringAsync(bundleJsPath, bundleContainer.getBundle())
+  // }
   await writeAsStringAsync(
     htmlPath,
     viewerHtml(
@@ -151,6 +154,7 @@ async function writeWebViewReaderFileAsync(
       withScroll,
       withPinchZoom,
       maximumPinchZoomScale,
+      bundle
     ),
   )
 }
