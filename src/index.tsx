@@ -71,12 +71,12 @@ interface State {
 
 function viewerHtml(
   base64: string,
+  bundle: string,
   password?: string,
   customStyle?: CustomStyle,
   withScroll: boolean = false,
   withPinchZoom: boolean = false,
-  maximumPinchZoomScale: number = 5,
-  bundle
+  maximumPinchZoomScale: number = 5
 ): string {
   return `
 <!DOCTYPE html>
@@ -127,7 +127,7 @@ function viewerHtml(
 }
 
 // PATHS
-const bundleJsPath = `${cacheDirectory}bundle.js`
+// const bundleJsPath = `${cacheDirectory}bundle.js`
 const htmlPath = `${cacheDirectory}index.html`
 const pdfPath = `${cacheDirectory}file.pdf`
 
@@ -139,7 +139,7 @@ async function writeWebViewReaderFileAsync(
   withPinchZoom?: boolean,
   maximumPinchZoomScale?: number
 ): Promise<void> {
-  const { exists, md5 } = await getInfoAsync(bundleJsPath, { md5: true })
+  // const { exists, md5 } = await getInfoAsync(bundleJsPath, { md5: true })
   const bundleContainer = require('./bundleContainer')
   const bundle = bundleContainer.getBundle()
   // if (__DEV__ || !exists || bundleContainer.getBundleMd5() !== md5) {
@@ -149,12 +149,12 @@ async function writeWebViewReaderFileAsync(
     htmlPath,
     viewerHtml(
       data,
+      bundle,
       password,
       customStyle,
       withScroll,
       withPinchZoom,
-      maximumPinchZoomScale,
-      bundle
+      maximumPinchZoomScale
     ),
   )
 }
